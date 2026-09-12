@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Map — Santa Cruz Porchfest</title>
+<meta name="description" content="Interactive map of porch stages, downtown food and drink, and restrooms for Santa Cruz Porchfest.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:   #16281C;   /* deep porch green — all text */
+    --paper: #FFFDF7;
+    --sage:  #DDE4D4;
+    --ochre: #E8A317;   /* matches the yellow map pins */
+    --rust:  #9C4A2F;
+    --rule:  #C2CDB8;
+    --slab:  "Zilla Slab", Georgia, serif;
+    --sans:  "Source Sans 3", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 17px/1.6 var(--sans);
+  }
+
+  .wrap { max-width: 60rem; margin: 0 auto; padding: 0 1.25rem; }
+
+  /* ---------- nav ---------- */
+  nav { border-bottom: 2px solid var(--ink); padding: .9rem 0; }
+  nav .wrap { display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: baseline; }
+  nav .brand { font-family: var(--slab); font-weight: 700; font-size: 1.15rem; margin-right: auto; }
+  nav a { color: var(--ink); text-decoration: none; border-bottom: 2px solid transparent; padding-bottom: 2px; }
+  nav a:hover, nav a:focus { border-bottom-color: var(--ochre); }
+  nav a[aria-current] { border-bottom-color: var(--ink); font-weight: 600; }
+
+  /* ---------- hero ---------- */
+  header.hero { padding: 2.5rem 0 1.5rem; }
+  header.hero h1 {
+    font-family: var(--slab);
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 3.1rem);
+    line-height: 1.1;
+    letter-spacing: -.01em;
+    margin: 0 0 .75rem;
+    max-width: 18ch;
+  }
+  header.hero p { margin: 0; max-width: 58ch; }
+
+  /* ---------- legend ---------- */
+  .legend { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.5rem 0 1.75rem; padding: 0; list-style: none; }
+  .legend li {
+    display: flex; align-items: center; gap: .5rem;
+    border: 1.5px solid var(--rule);
+    padding: .35rem .8rem .35rem .5rem;
+    font-size: .95rem;
+  }
+  .dot { width: 1.1rem; height: 1.1rem; border-radius: 50%; flex: none; }
+
+  /* ---------- map ---------- */
+  .map-frame { border: 2px solid var(--ink); }
+  .map-wrap { position: relative; width: 100%; padding-top: 120%; }
+  .map-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  @media (min-width: 40rem) { .map-wrap { padding-top: 68%; } }
+
+  .map-note { font-size: .9rem; margin: .6rem 0 0; max-width: 58ch; }
+  .map-note a { color: var(--ink); }
+
+  /* ---------- spots ---------- */
+  section.spots { padding: 2.75rem 0 1rem; }
+  section.spots h2 { font-family: var(--slab); font-weight: 700; font-size: 1.5rem; margin: 2.5rem 0 .25rem; }
+  section.spots h2:first-of-type { margin-top: 0; }
+  .subhead { font-size: .95rem; margin: 0 0 1rem; max-width: 58ch; }
+
+  ol.venues, ul.venues { list-style: none; margin: 0; padding: 0; }
+
+  .venue { display: flex; gap: 1rem; padding: .9rem 0; border-top: 1px solid var(--rule); }
+  .venue:last-child { border-bottom: 1px solid var(--rule); }
+
+  .marker {
+    flex: none; width: 2rem; height: 2rem; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--slab); font-weight: 700; font-size: 1rem;
+    background: var(--ochre); color: var(--ink);
+  }
+  .marker.plain { background: var(--sage); }
+  .marker.rust  { background: var(--rust); color: var(--paper); }
+
+  .venue h3 { font-family: var(--slab); font-weight: 500; font-size: 1.1rem; margin: 0; }
+  .venue .addr { font-size: .95rem; margin: .1rem 0 0; }
+  .venue .walk { font-size: .95rem; margin: .35rem 0 0; }
+  .venue .walk a { color: var(--ink); text-decoration-color: var(--ochre); text-decoration-thickness: 2px; }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 2px solid var(--ink); margin-top: 3rem; padding: 1.75rem 0 3rem; font-size: .95rem; }
+  footer a { color: var(--ink); }
+  footer p { margin: .35rem 0; }
+
+  :focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="brand">Santa Cruz Porchfest</span>
+    <a href="https://santacruzporchfest.lovable.app/">Home</a>
+    <a href="https://santacruzporchfest.lovable.app/map" aria-current="page">Map</a>
+    <a href="https://santacruzporchfest.lovable.app/schedule">Schedule</a>
+    <a href="https://santacruzporchfest.lovable.app/bands">Get Involved</a>
+    <a href="https://santacruzporchfest.lovable.app/about">About</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Every porch, and somewhere to stop on the way.</h1>
+    <p>The porches sit within a few blocks of each other, with coffee, beer and public
+       restrooms along the route. Tap a pin on the map, or use the walking links below —
+       it is all an easy stroll, so leave the car at home.</p>
+
+    <ul class="legend">
+      <li><span class="dot" style="background:var(--ochre)"></span>Porch stage</li>
+      <li><span class="dot" style="background:var(--sage)"></span>Food &amp; drink</li>
+      <li><span class="dot" style="background:var(--rust)"></span>Restroom</li>
+    </ul>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="map-frame">
+    <div class="map-wrap">
+      <iframe
+        src="https://www.google.com/maps/d/embed?mid=1NcRzg7wzF_Lsww51RWJspoSW2yyJ7QE&ehbc=16281C&ll=36.9750,-122.0260&z=16"
+        loading="lazy"
+        title="Map of Santa Cruz Porchfest porch stages, food and drink, and restrooms"></iframe>
+    </div>
+  </div>
+  <p class="map-note">
+    <a href="https://www.google.com/maps/d/viewer?mid=1NcRzg7wzF_Lsww51RWJspoSW2yyJ7QE" target="_blank" rel="noopener">Open the map full screen</a>
+    — directions from a map pin arrive in driving mode, so switch to walking, or use the links below instead.
+  </p>
+</div>
+
+<section class="spots">
+  <div class="wrap">
+
+    <h2>Porch stages</h2>
+    <p class="subhead">Numbers match the pins on the map. More porches are added as hosts confirm.</p>
+    <ol class="venues">
+      <li class="venue">
+        <span class="marker">1</span>
+        <div>
+          <h3>Dr. Morgan's Queen Anne</h3>
+          <p class="addr">239 Walnut Ave</p>
+          <p class="walk"><a class="dir" data-dest="239 Walnut Ave, Santa Cruz, CA" href="#">Walking directions</a></p>
+        </div>
+      </li>
+      <li class="venue">
+        <span class="marker">2</span>
+        <div>
+          <h3>The Vision Sanctuary</h3>
+          <p class="addr">313 Cedar St</p>
+          <p class="walk"><a class="dir" data-dest="313 Cedar St, Santa Cruz, CA" href="#">Walking directions</a></p>
+        </div>
+      </li>
+      <li class="venue">
+        <span class="marker">3</span>
+        <div>
+          <h3>619 Washington Porch</h3>
+          <p class="addr">619 Washington St</p>
+          <p class="walk"><a class="dir" data-dest="619 Washington St, Santa Cruz, CA" href="#">Walking directions</a></p>
+        </div>
+      </li>
+      <li class="venue">
+        <span class="marker">4</span>
+        <div>
+          <h3>Land Trust of Santa Cruz County</h3>
+          <p class="addr">911 Center St</p>
+          <p class="walk"><a class="dir" data-dest="911 Center St, Santa Cruz, CA" href="#">Walking directions</a></p>
+        </div>
+      </li>
+    </ol>
+
+    <h2>Food &amp; drink</h2>
+    <p class="subhead">Both a short walk from the porches.</p>
+    <ul class="venues">
+      <li class="venue">
+        <span class="marker plain">&#9679;</span>
+        <div>
+          <h3>Lúpulo Craft Beer House</h3>
+          <p class="addr">233 Cathcart St — craft beer and tapas</p>
+          <p class="walk"><a class="dir" data-dest="233 Cathcart St, Santa Cruz, CA" href="#">Walking directions</a></p>
+        </div>
+      </li>
+      <li class="venue">
+        <span class="marker plain">&#9679;</span>
+        <div>
+          <h3>Verve Coffee Roasters</h3>
+          <p class="addr">1010 Pacific Ave — local coffee</p>
+          <p class="walk"><a class="dir" data-dest="1010 Pacific Ave, Santa Cruz, CA" href="#">Walking directions</a></p>
+        </div>
+      </li>
+    </ul>
+
+    <h2>Restrooms</h2>
+    <p class="subhead">Public restrooms downtown. Opening hours vary, so check before relying on one.</p>
+    <ul class="venues">
+      <li class="venue"><span class="marker rust">&#9679;</span><div><h3>Downtown Branch Library</h3><p class="addr">224 Church St</p><p class="walk"><a class="dir" data-dest="224 Church St, Santa Cruz, CA" href="#">Walking directions</a></p></div></li>
+      <li class="venue"><span class="marker rust">&#9679;</span><div><h3>Locust St Parking Garage</h3><p class="addr">124 Locust St</p><p class="walk"><a class="dir" data-dest="124 Locust St, Santa Cruz, CA" href="#">Walking directions</a></p></div></li>
+      <li class="venue"><span class="marker rust">&#9679;</span><div><h3>Soquel/Front Parking Garage</h3><p class="addr">120 Front St</p><p class="walk"><a class="dir" data-dest="120 Front St, Santa Cruz, CA" href="#">Walking directions</a></p></div></li>
+      <li class="venue"><span class="marker rust">&#9679;</span><div><h3>Abbott Square Market</h3><p class="addr">725 Front St</p><p class="walk"><a class="dir" data-dest="725 Front St, Santa Cruz, CA" href="#">Walking directions</a></p></div></li>
+      <li class="venue"><span class="marker rust">&#9679;</span><div><h3>Calvary Church</h3><p class="addr">532 Center St</p><p class="walk"><a class="dir" data-dest="532 Center St, Santa Cruz, CA" href="#">Walking directions</a></p></div></li>
+      <li class="venue"><span class="marker rust">&#9679;</span><div><h3>Beach Street Restrooms</h3><p class="addr">125 Beach St</p><p class="walk"><a class="dir" data-dest="125 Beach St, Santa Cruz, CA" href="#">Walking directions</a></p></div></li>
+      <li class="venue"><span class="marker rust">&#9679;</span><div><h3>London Nelson Center</h3><p class="addr">301 Center St</p><p class="walk"><a class="dir" data-dest="301 Center St, Santa Cruz, CA" href="#">Walking directions</a></p></div></li>
+    </ul>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>A free, all-ages neighbourhood music event on porches across downtown Santa Cruz.</p>
+    <p><a href="mailto:santacruzporchfest@gmail.com">santacruzporchfest@gmail.com</a>
+       &nbsp;&middot;&nbsp;
+       <a href="https://www.instagram.com/santacruzporchfest">Instagram</a></p>
+    <p>Unofficial mock-up for discussion. Not the live Porchfest site.</p>
+  </div>
+</footer>
+
+<script>
+  // Point each directions link at the visitor's likely map app, in walking mode.
+  (function () {
+    var apple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
+    document.querySelectorAll('a.dir').forEach(function (a) {
+      var d = encodeURIComponent(a.dataset.dest);
+      a.href = apple
+        ? 'https://maps.apple.com/?daddr=' + d + '&dirflg=w'
+        : 'https://www.google.com/maps/dir/?api=1&destination=' + d + '&travelmode=walking';
+      a.target = '_blank';
+      a.rel = 'noopener';
+    });
+  })();
+</script>
+
+</body>
+</html>
