@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Porchfest map embed test</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font: 16px/1.5 system-ui, sans-serif;
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 4rem;
+  }
+  h1 { font-size: 1.25rem; margin: 0 0 .25rem; }
+  p.note { margin: 0 0 1.5rem; opacity: .7; font-size: .9rem; }
+  .map-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 75%;        /* Google's embed is 4:3 */
+    overflow: hidden;
+    border-radius: 6px;
+  }
+  .map-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .escape { margin: .75rem 0 2rem; }
+  ol { padding-left: 1.2rem; }
+  li { margin-bottom: .6rem; }
+  code { font-size: .85em; background: rgba(127,127,127,.15); padding: .1em .35em; border-radius: 3px; }
+  footer { margin-top: 2rem; font-size: .85rem; opacity: .6; }
+</style>
+</head>
+<body>
+
+<h1>Porchfest map embed test</h1>
+<p class="note">Scratch page. Not for publication.</p>
+
+<!-- Replace MAP_ID with the mid from Share > Embed on my site.
+     ehbc = title bar colour, ll = centre, z = zoom. -->
+<div class="map-wrap">
+  <iframe
+    src="https://www.google.com/maps/d/embed?mid=MAP_ID&ehbc=2E312F&ll=36.9750,-122.0260&z=16"
+    loading="lazy"
+    title="Santa Cruz Porchfest map"></iframe>
+</div>
+
+<p class="escape">
+  <a href="https://www.google.com/maps/d/viewer?mid=MAP_ID" target="_blank" rel="noopener">
+    Open the map full screen in Google Maps
+  </a>
+</p>
+
+<h2 style="font-size:1rem;">Check on the phone</h2>
+<ol>
+  <li>Does the map render at all, or is the frame blank?</li>
+  <li>Tap a porch pin. Does the info card open, and is the description there?</li>
+  <li>Tap directions in the card. Does Google Maps open with the right destination, and in which travel mode?</li>
+  <li>Is the walking-directions link in the description tappable?</li>
+  <li>Does the full-screen link above get hijacked by the Google Maps app on a first tap?</li>
+  <li>Can you pinch-zoom the map without the whole page zooming?</li>
+  <li>Does the latest pin edit show here, or a stale version?</li>
+</ol>
+
+<footer>
+  Page loaded <span id="t"></span> — if this time is old, you are looking at a cached page, not a stale map.
+</footer>
+
+<script>
+  document.getElementById('t').textContent = new Date().toLocaleTimeString();
+</script>
+
+</body>
+</html>
